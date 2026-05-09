@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crop Yield Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="container">
+      <div class="left-panel">
+        <h1>Crop Yield Prediction</h1>
+        <p class="subtitle">
+          Predict agricultural yield from area, crop type, year, rainfall, pesticide usage,
+          and average temperature using your trained Random Forest model.
+        </p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <span>Target</span>
+            <strong>Yield (hg/ha)</strong>
+          </div>
+          <div class="info-card">
+            <span>Inputs</span>
+            <strong>6 Features</strong>
+          </div>
+          <div class="info-card">
+            <span>Model used</span>
+            <strong>Random Forest Model</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-panel">
+        <h2>Enter the details</h2>
+        <form method="POST" class="prediction-form">
+          <div class="form-grid">
+            <div class="field">
+              <label for="area">Area</label>
+              <select id="area" name="area" required>
+                <option value="">Select area</option>
+                {% for area in area_options %}
+                <option value="{{ area }}" {% if form_data.get('area') == area %}selected{% endif %}>{{ area }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="item">Crop item</label>
+              <select id="item" name="item" required>
+                <option value="">Select crop</option>
+                {% for item in item_options %}
+                <option value="{{ item }}" {% if form_data.get('item') == item %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="year">Year</label>
+              <input type="number" id="year" name="year" min="1990" max="2035" value="{{ form_data.get('year', '') }}" required>
+            </div>
+
+            <div class="field">
+              <label for="average_rainfall">Average rainfall (mm/year)</label>
+              <input type="number" step="any" id="average_rainfall" name="average_rainfall" value="{{ form_data.get('average_rainfall', '') }}" required>
+            </div>
+
+            <div class="field">
+              <label for="pesticides_tonnes">Pesticides (tonnes)</label>
+              <input type="number" step="any" id="pesticides_tonnes" name="pesticides_tonnes" value="{{ form_data.get('pesticides_tonnes', '') }}" required>
+            </div>
+
+            <div class="field">
+              <label for="avg_temp">Average temperature</label>
+              <input type="number" step="any" id="avg_temp" name="avg_temp" value="{{ form_data.get('avg_temp', '') }}" required>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Predict Yield</button>
+        </form>
+
+        {% if prediction is not none %}
+          <div class="message success">
+            <p>Predicted crop yield</p>
+            <h3>{{ prediction }} hg/ha</h3>
+          </div>
+        {% endif %}
+
+        {% if error %}
+          <div class="message error">
+            <p>{{ error }}</p>
+          </div>
+        {% endif %}
+
+        <p class="note">
+          Note: Ensure all inputs are valid and within reasonable ranges for accurate predictions.
+        </p>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
